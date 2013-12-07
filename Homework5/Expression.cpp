@@ -67,6 +67,48 @@ void Expression::display() const
         tokenized[i].display();
     }
 }
+string Expression::convertToPostFix()
+{
+    string postfixString = "";
+    stack<Token> tokenStack; 
+    Token currentToken;
+    for(int i =0; i <tokenized.size(); i++)
+    {        
+        currentToken = tokenized[i];
+        if(currentToken.type == op)
+        {
+            if(tokenStack.empty())//if operator add to stack
+            {
+                tokenStack.push(currentToken);
+            }else //If stack is not empty check priority of top operator
+            {
+                //if lower precedence push to stack
+                if(tokenStack.top().priority < currentToken.priority)
+                {
+                    tokenStack.push(currentToken);
+                }else //else if, higher, or equal pop and add to postfix string
+                {
+                    postfixString += tokenStack.top().token;
+                    postfixString += " "; 
+                    tokenStack.pop();
+                }                
+            }
+        }else if(currentToken.type == integer)//if not operator add to postfix string
+        {
+            postfixString += tokenized[i].token;
+            postfixString += " "; 
+        }              
+    }
+    //if stack is not empty pop rest of characters to postfix string
+    while(!tokenStack.empty())
+    {
+        postfixString += tokenStack.top().token;
+        postfixString += " "; 
+        tokenStack.pop();
+    }
+
+    return postfixString;
+}
 string Expression::get_original() const
 {
     return original;

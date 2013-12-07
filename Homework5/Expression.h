@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <stack>
 #include "Token.h"
 
 using namespace std;
@@ -29,6 +30,7 @@ public:
     void set(const string& s);
     void display() const;
     
+    string convertToPostFix();    
     string get_original() const;
     
     int tokenstart(int pos, string s);

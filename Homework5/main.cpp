@@ -7,24 +7,34 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <stack>
-
+#include <cstring>
 #include "Token.h"
 #include "Expression.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
-    string input = "2+3"; 
+    string input = "2+3*4"; 
     string action = "=";
     string additionalInput = "";
     bool continueExecution = true;
-    //stack<int> expressionStack;
     Expression inputExpression;
-    
+        
     cout << "=== expression evaluation program starts ===" << endl;
     inputExpression.set(input);
-    inputExpression.display();
+    //inputExpression.display();
+    
+    //Convert expression into postfix
+    cout << inputExpression.convertToPostFix();
+    
+    //Separating on semicolons
+//    char * nextString;
+//    nextString = strtok (input.c_str(), ";");
+//    while (nextString != NULL)
+//    {
+//        nextString = strtok(NULL, ";");
+//    }
+
 //    
 //    do
 //    {
@@ -34,7 +44,7 @@ int main(int argc, char** argv) {
 //        }
 //        
 //        cout << "Action:";        
-//        cin >> action;
+//        cin >> action;``
 //        
 //        //Lower casing action so don't have to look for q || Q && c || C, etc
 //        //todo Determine if it's neccessary to validate if action is > 1 char

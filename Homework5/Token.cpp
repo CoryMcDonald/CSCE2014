@@ -9,9 +9,9 @@
 #include <iostream>
 #include <stdlib.h>
 
-using namespace std;
+ using namespace std;
 
-Token::Token() {
+ Token::Token() {
     //Default constructor
     type = invalid; 
     token = "";
@@ -32,9 +32,9 @@ void Token::set(string s) {
     {
         //Will only work if there's only numbers in the string
         if(s[0] != 0 && NumberPosition != string::npos 
-                && LetterPosition == string::npos
-                && ParenthesisPosition == string::npos
-                && OperatorPosition == string::npos)
+            && LetterPosition == string::npos
+            && ParenthesisPosition == string::npos
+            && OperatorPosition == string::npos)
         {
             type = integer;
         }
@@ -53,46 +53,55 @@ void Token::set(string s) {
         {           
             switch(s[0])
             {
-                case '=': type=eq;
-                break;
-                case '+': type=op; 
-                break;
-                case '-': type=op;
-                break;
-                case '*': type=op;
-                break;
-                case '/': type=op;
-                break;
-                case '%': type=op;
-                break;
+                case '=': 
+                    type=eq;
+                    break;
+                case '+': 
+                    type=op; 
+                    priority = 4;
+                    break;
+                case '-': 
+                    type=op;
+                    priority = 4;
+                    break;
+                case '*': 
+                    type=op;
+                    priority = 5;                    
+                    break;
+                case '/': 
+                    type=op;
+                    priority = 5;                                        
+                    break;
+                case '%': 
+                    type=op;
+                    priority = 5;                                        
+                    break;
                 case '(': type=openbrace;
-                break;
+                    break;
                 case ')': type=closebrace;
-                break;
+                    break;
                 default:
                     type=invalid;
-                break;
+                    break;
             }
         }
-    }    
+    }
     else
     {
         cout << "Error no token passed"; //in the future this will throw exception
     }   
     token = s;
     //Assigning priority to token based on order of operations
-    if(type == letter)
-        priority = 4; 
-    else if(type == integer)        
-        priority=3; 
-    else if(type == op)     
-         priority = 5; 
-    else if(type == eq) 
-        priority = 6;
-    else if(type == openbrace) 
+    if(type == openbrace) 
         priority =1;
     else if (type == closebrace)
         priority =1;
+    else if(type == integer)        
+        priority=2; 
+    else if(type == letter)
+        priority = 3;  
+    else if(type == eq) 
+        priority = 6;
     else if(type == invalid)    
         priority =-1;
 
@@ -128,7 +137,7 @@ void Token::display() const{
 }
 token_type Token::get_type() const
 {
-   return type;
+ return type;
 }
 string Token::get_token() const
 {
