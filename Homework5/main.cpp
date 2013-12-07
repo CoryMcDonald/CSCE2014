@@ -14,7 +14,7 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    string input = "2+3*4"; 
+    string input = "2+3"; 
     string action = "=";
     string additionalInput = "";
     bool continueExecution = true;
