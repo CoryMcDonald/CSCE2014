@@ -14,8 +14,8 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    string input = "2+3"; 
-    string action = "=";
+    string input = "a+b-c*d/e"; 
+    string action = ">";
     string additionalInput = "";
     bool continueExecution = true;
     Expression inputExpression;
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
         }
         
         cout << "Action:";        
-        cin >> action;
+        //cin >> action;
         
         switch(tolower(action.c_str()[0]))
         {
@@ -54,13 +54,15 @@ int main(int argc, char** argv) {
                 inputExpression.tokenized.clear();
                 inputExpression.set(input);
                 cout << "Prefix of " << input << " is: " 
-                       << inputExpression.convertToPreFix() << endl;
+                       << inputExpression.convertToPreFix() << "]" << endl;
+                continueExecution = false;
                 break;
             case '<' :
                 inputExpression.tokenized.clear();
                 inputExpression.set(input);
                 cout << "Postfix of " << input << " is: " 
                        << inputExpression.getPostfixString() << endl;
+                continueExecution = false;
                 break;
             case 'f' :
                 //todo convert each expression in the sequence of expressions to the equivalent

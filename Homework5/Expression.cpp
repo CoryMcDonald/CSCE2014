@@ -94,11 +94,16 @@ void Expression::convertToPostFix()
                         postfixVector.push_back(tokenStack.top());
                         tokenStack.pop();
                     }   
+                    tokenStack.pop(); //pop openbrace
                 }
                 else //else if, higher, or equal pop and add to postfix string
                 {         
-                    postfixVector.push_back(tokenStack.top());
-                    tokenStack.pop();
+                    while(!tokenStack.empty() && tokenStack.top().priority >= currentToken.priority)
+                    {
+                        postfixVector.push_back(tokenStack.top());
+                        tokenStack.pop();
+                    }
+                    tokenStack.push(currentToken);
                 }   
             }
         }else if(currentToken.type == integer || currentToken.type == letter)//if not operator add to postfix string
@@ -109,10 +114,7 @@ void Expression::convertToPostFix()
     //if stack is not empty pop rest of characters to postfix string
     while(!tokenStack.empty())
     {
-        if(tokenStack.top().type != openbrace)
-        {
-            postfixVector.push_back(tokenStack.top());
-        }
+        postfixVector.push_back(tokenStack.top());        
         tokenStack.pop();
     }   
     postfix = postfixVector;
