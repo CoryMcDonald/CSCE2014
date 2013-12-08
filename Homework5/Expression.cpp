@@ -67,9 +67,9 @@ void Expression::display() const
         tokenized[i].display();
     }
 }
-string Expression::convertToPostFix()
+void Expression::convertToPostFix()
 {
-    string postfixString = "";
+    vector<Token> postfixVector;
     stack<Token> tokenStack; 
     Token currentToken;
     for(int i =0; i <tokenized.size(); i++)
@@ -91,22 +91,19 @@ string Expression::convertToPostFix()
                 {
                     while(tokenStack.top().type != openbrace)
                     {
-                        postfixString += tokenStack.top().token;
-                        postfixString += " "; 
+                        postfixVector.push_back(tokenStack.top());
                         tokenStack.pop();
                     }   
                 }
                 else //else if, higher, or equal pop and add to postfix string
                 {         
-                    postfixString += tokenStack.top().token;
-                    postfixString += " "; 
+                    postfixVector.push_back(tokenStack.top());
                     tokenStack.pop();
                 }   
             }
         }else if(currentToken.type == integer)//if not operator add to postfix string
         {
-            postfixString += tokenized[i].token;
-            postfixString += " "; 
+            postfixVector.push_back(tokenized[i]);
         }              
     }
     //if stack is not empty pop rest of characters to postfix string
@@ -114,13 +111,80 @@ string Expression::convertToPostFix()
     {
         if(tokenStack.top().type != openbrace)
         {
-            postfixString += tokenStack.top().token;
-            postfixString += " ";
+            postfixVector.push_back(tokenStack.top());
         }
         tokenStack.pop();
+    }   
+    postfix = postfixVector;
+}
+string Expression::getPostfixString()
+{
+    convertToPostFix();
+    string postfixString ="";
+    for(int i=0; i< postfix.size(); i++)
+    {
+        postfixString += postfix[i].token; 
     }
-
     return postfixString;
+}
+string Expression::convertToPreFix()
+{
+    string prefixString = "";
+    stack<Token> operatorStack; 
+    stack<Token> operandStack; 
+    stack<Token> outputStack; 
+
+    Token currentToken;
+    
+    for(int i =0; i <tokenized.size(); i++)
+    {        
+        currentToken = tokenized[i];
+        if(currentToken.type == integer)
+        {
+            operandStack.push(currentToken);
+        }else if(currentToken.type == openbrace)
+        {
+            operatorStack.push(currentToken);
+        }else if(currentToken.type == closebrace)
+        {
+            while(operatorStack.top().type != openbrace)
+            {
+                Token currentOperator = operatorStack.top();
+                operatorStack.pop();
+                int right =atoi(operandStack.top().token.c_str());
+                operandStack.pop();
+                
+                int left=atoi(operandStack.top().token.c_str());
+                operandStack.pop();
+                
+                //Token operand = Token(currentOperator + left + right);                
+                //operandStack.push(operand);
+            }
+            operandStack.pop();
+        }else if (currentToken.priority <= operatorStack.top().priority)
+        {
+            while(!operatorStack.empty() && currentToken.priority <= operatorStack.top().priority)
+            {
+               // string currentOperator = operatorStack.top();
+                operatorStack.pop();
+                int right =atoi(operandStack.top().token.c_str());
+                operandStack.pop();
+                
+                int left=atoi(operandStack.top().token.c_str());
+                operandStack.pop();
+                
+               // Token operand = Token(currentOperator + left + right);                
+                //operandStack.push(operand);
+            }
+            operatorStack.push(currentToken);
+        }
+    }
+    while(!operatorStack.empty())
+    {
+        
+    }
+    
+    return prefixString;
 }
 string Expression::get_original() const
 {
@@ -132,7 +196,7 @@ vector<Token> Expression::get_tokenized() const
 }
 vector<Token> Expression::get_postfix() const
 {
-    return postfix;
+
 }
 bool Expression::get_valid() const
 {

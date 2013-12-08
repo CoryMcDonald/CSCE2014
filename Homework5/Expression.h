@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <stack>
+#include <cstdlib>
 #include "Token.h"
 
 using namespace std;
@@ -30,7 +31,11 @@ public:
     void set(const string& s);
     void display() const;
     
-    string convertToPostFix();    
+    Token operationCombine(stack<Token> operatorStack, stack<Token> operandStack);
+    
+    void convertToPostFix(); 
+    string getPostfixString();
+    string convertToPreFix(); 
     string get_original() const;
     
     int tokenstart(int pos, string s);

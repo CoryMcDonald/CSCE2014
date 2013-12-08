@@ -14,73 +14,73 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    string input = "2+3"; 
+    string input = "2+3*4"; 
     string action = "=";
     string additionalInput = "";
     bool continueExecution = true;
     Expression inputExpression;
         
     cout << "=== expression evaluation program starts ===" << endl;
-    inputExpression.set(input);
-    //inputExpression.display();
     
-    //Convert expression into postfix
-    cout << inputExpression.convertToPostFix();
+    do
+    {
+        if(input == "")
+        {
+            cout <<"Input: ";
+            cin >> input;    
+        }
+        
+        cout << "Action:";        
+        cin >> action;
+        
+        switch(tolower(action.c_str()[0]))
+        {
+            case '=' :
+                //Check if the expression has equals, that'll determine
+                //if we replace the letters, ex: a+b-c*d/e;a=1;b=2;c=3;d=4;e=5;
+                if(input.find(";"))
+                {
+                    char * inputCString = strdup(input.c_str());
+                    char * nextString;
+                    nextString = strtok (inputCString, ";");
+                    while (nextString != NULL)
+                    {
+                        nextString = strtok(NULL, ";'");
+                    }
+                }else {
+                    //evaluate like normal
+                }
+                break;
+            case '>' :
+                //todo implement prefix notion
+                break;
+            case '<' :
+                inputExpression.tokenized.clear();
+                inputExpression.set(input);
+                 cout << "Postfix of " << input << " is: " 
+                       << inputExpression.getPostfixString() << endl;
+                break;
+            case 'f' :
+                //todo convert each expression in the sequence of expressions to the equivalent
+                //fully parenthesized expression.
+                break;
+            case 'c' :
+                cout << "Input: ";
+                cin >> additionalInput;
+                input += additionalInput;
+                break;
+            case 'q' :
+                    continueExecution = false;
+                    break;
+            case 's' :
+                    input = "";
+                    break;
+            default :                
+                cout <<"Invalid action" << endl;                
+                break;      
+        }
+    }while (continueExecution);
     
-    //Separating on semicolons
-//    char * nextString;
-//    nextString = strtok (input.c_str(), ";");
-//    while (nextString != NULL)
-//    {
-//        nextString = strtok(NULL, ";");
-//    }
-
-//    
-//    do
-//    {
-//        if(input == "")
-//        {
-//            cin >> input;
-//        }
-//        
-//        cout << "Action:";        
-//        cin >> action;``
-//        
-//        //Lower casing action so don't have to look for q || Q && c || C, etc
-//        //todo Determine if it's neccessary to validate if action is > 1 char
-//        switch(tolower(action.c_str()[0]))
-//        {
-//            case '=' :
-//                //todo implement evaluation of expression
-//                break;
-//            case '>' :
-//                //todo implement prefix notion
-//                break;
-//            case '<' :
-//                //todo implement postfix notion
-//                break;
-//            case 'f' :
-//                //todo convert each expression in the sequence of expressions to the equivalent
-//                //fully parenthesized expression.
-//                break;
-//            case 'c' :
-//                cout << "Input: ";
-//                cin >> additionalInput;
-//                input += additionalInput;
-//                break;
-//            case 'q' :
-//                    continueExecution = false;
-//                    break;
-//            case 's' :
-//                    input = "";
-//                    //    s : start over for a new sequence of expressions
-//                    break;
-//            default :                
-//                cout <<"Invalid action" << endl;                
-//                break;      
-//        }
-//    }while (continueExecution);
-//    
     return 0;
 }
 
