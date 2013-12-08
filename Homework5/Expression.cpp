@@ -101,7 +101,7 @@ void Expression::convertToPostFix()
                     tokenStack.pop();
                 }   
             }
-        }else if(currentToken.type == integer)//if not operator add to postfix string
+        }else if(currentToken.type == integer || currentToken.type == letter)//if not operator add to postfix string
         {
             postfixVector.push_back(tokenized[i]);
         }              
@@ -123,7 +123,7 @@ string Expression::getPostfixString()
     string postfixString ="";
     for(int i=0; i< postfix.size(); i++)
     {
-        postfixString += postfix[i].token; 
+        postfixString += postfix[i].token + " "; 
     }
     return postfixString;
 }
@@ -132,58 +132,68 @@ string Expression::convertToPreFix()
     string prefixString = "";
     stack<Token> operatorStack; 
     stack<Token> operandStack; 
-    stack<Token> outputStack; 
+    stack<string> outputStack; 
 
     Token currentToken;
     
     for(int i =0; i <tokenized.size(); i++)
     {        
         currentToken = tokenized[i];
-        if(currentToken.type == integer)
+        
+        if(currentToken.type == integer || currentToken.type == letter)
         {
-            operandStack.push(currentToken);
-        }else if(currentToken.type == openbrace)
+            outputStack.push(currentToken.token);
+        }else if(currentToken.type == openbrace || operatorStack.empty() || currentToken.priority > operatorStack.top().priority)
         {
             operatorStack.push(currentToken);
         }else if(currentToken.type == closebrace)
         {
             while(operatorStack.top().type != openbrace)
             {
-                Token currentOperator = operatorStack.top();
+                string right = outputStack.top(); //Right                   
+                outputStack.pop();
+                
+                string left = outputStack.top(); //Left                  
+                outputStack.pop();
+                
+                outputStack.push(operatorStack.top().token + " " + left + " " + right); //Operator
                 operatorStack.pop();
-                int right =atoi(operandStack.top().token.c_str());
-                operandStack.pop();
-                
-                int left=atoi(operandStack.top().token.c_str());
-                operandStack.pop();
-                
-                //Token operand = Token(currentOperator + left + right);                
-                //operandStack.push(operand);
             }
-            operandStack.pop();
-        }else if (currentToken.priority <= operatorStack.top().priority)
+            operatorStack.pop();
+        }
+        else if(currentToken.priority <= operatorStack.top().priority)
         {
-            while(!operatorStack.empty() && currentToken.priority <= operatorStack.top().priority)
+            while(!operatorStack.empty() 
+            && currentToken.priority <= operatorStack.top().priority)
             {
-               // string currentOperator = operatorStack.top();
+                string right = outputStack.top(); //Right                   
+                outputStack.pop();
+                
+                string left = outputStack.top(); //Left                  
+                outputStack.pop();
+                
+                outputStack.push(operatorStack.top().token + " " + left + " " + right); //Operator
                 operatorStack.pop();
-                int right =atoi(operandStack.top().token.c_str());
-                operandStack.pop();
-                
-                int left=atoi(operandStack.top().token.c_str());
-                operandStack.pop();
-                
-               // Token operand = Token(currentOperator + left + right);                
-                //operandStack.push(operand);
             }
-            operatorStack.push(currentToken);
+            operandStack.push(currentToken);
         }
     }
     while(!operatorStack.empty())
     {
-        
+        string right = outputStack.top(); //Right                   
+        outputStack.pop();
+
+        string left = outputStack.top(); //Left                  
+        outputStack.pop();
+
+        outputStack.push(operatorStack.top().token + " " + left + " " + right); //Operator
+        operatorStack.pop();
     }
-    
+    while(!outputStack.empty())
+    {
+        prefixString += outputStack.top();
+        outputStack.pop();
+    }
     return prefixString;
 }
 string Expression::get_original() const

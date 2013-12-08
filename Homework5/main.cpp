@@ -14,14 +14,13 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    string input = "2+3*4"; 
+    string input = "2+3"; 
     string action = "=";
     string additionalInput = "";
     bool continueExecution = true;
     Expression inputExpression;
         
     cout << "=== expression evaluation program starts ===" << endl;
-    
     do
     {
         if(input == "")
@@ -52,12 +51,15 @@ int main(int argc, char** argv) {
                 }
                 break;
             case '>' :
-                //todo implement prefix notion
+                inputExpression.tokenized.clear();
+                inputExpression.set(input);
+                cout << "Prefix of " << input << " is: " 
+                       << inputExpression.convertToPreFix() << endl;
                 break;
             case '<' :
                 inputExpression.tokenized.clear();
                 inputExpression.set(input);
-                 cout << "Postfix of " << input << " is: " 
+                cout << "Postfix of " << input << " is: " 
                        << inputExpression.getPostfixString() << endl;
                 break;
             case 'f' :
