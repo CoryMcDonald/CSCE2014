@@ -13,72 +13,93 @@
 
 using namespace std;
 
+string replaceInString(string originalString, string toReplace)
+{
+    string newString = "";
+    //Check if the expression has equals, that'll determine
+    //if we replace the letters, ex: a+b-c*d/e;a=1;b=2;c=3;d=4;e=5;                
+    if(toReplace.find("=") != -1)
+    {
+        string variableReplacing = toReplace.substr(0,1);
+        string valueToReplaceWith = toReplace.substr(2,toReplace.size());
+        newString = originalString.replace(originalString.find(variableReplacing),
+                valueToReplaceWith.size(), valueToReplaceWith);
+    }else
+    {
+        newString = originalString.replace(originalString.find(toReplace), 0, "");
+    }
+    return newString;
+}
+
 int main(int argc, char** argv) {
-    string input = "a+b-c*d/e"; 
-    //string input = "(2+3)*4";
-    //string input = "2+3*4";
-    //string input = "2+3";
+    string input ="";
+    //string input = "a+b-c*d/e;a=1;b=2;c=3;d=4;e=5;"; 
+    //string input = "(2+3)*4;";
+    //string input = "2+3*4;";
+    //string input = "2+3;";
     string action = "=";
     string additionalInput = "";
+    string originalExpression = "";
     bool continueExecution = true;
     Expression inputExpression;
-        
+    char * expressionToEvaluate;
     cout << "=== expression evaluation program starts ===" << endl;
     do
     {
         if(input == "")
         {
-            cout <<"Input: ";
-            cin >> input;    
+            do{                
+                cout <<"Input: ";
+                cin >> input;
+            }while(input.find(";") == -1);            
         }
         
-        //cout << "Action:";        
-        //cin >> action;
+        cout << "Action:";        
+        cin >> action;
+        
+        expressionToEvaluate = strdup(input.c_str());
+        char * nextString;
+        nextString = strtok (expressionToEvaluate, ";");
+        originalExpression= string(expressionToEvaluate);
+
+        inputExpression.tokenized.clear();
+        inputExpression.set(originalExpression);
         
         switch(tolower(action.c_str()[0]))
         {
-            case '=' :
-                //Check if the expression has equals, that'll determine
-                //if we replace the letters, ex: a+b-c*d/e;a=1;b=2;c=3;d=4;e=5;
-//                if(input.find(";"))
-//                {
-//                    char * inputCString = strdup(input.c_str());
-//                    char * nextString;
-//                    nextString = strtok (inputCString, ";");
-//                    while (nextString != NULL)
-//                    {
-//                        nextString = strtok(NULL, ";'");
-//                    }
-//                }else {
-//                }
+            case '=' :                             
+
+                for(int i=0; nextString != NULL; i++)
+                {      
+                    if(i != 0)
+                    {
+                        expressionToEvaluate = strdup(replaceInString(expressionToEvaluate, nextString).c_str());
+                    }
+                    nextString = strtok(NULL, ";");                    
+                }
                 
                 inputExpression.tokenized.clear();
-                inputExpression.set(input);
-                cout << input << " = " 
+                inputExpression.set(expressionToEvaluate);
+                cout << originalExpression << " = " 
                        << inputExpression.evaluateExpression() << endl;
-                continueExecution = false;
                 break;
             case '>' :
-                inputExpression.tokenized.clear();
-                inputExpression.set(input);
-                cout << "Prefix of " << input << " is: " 
+                cout << "Prefix of " << originalExpression << " is: " 
                        << inputExpression.convertToPreFix() << endl;
-                continueExecution = false;
                 break;
             case '<' :
-                inputExpression.tokenized.clear();
-                inputExpression.set(input);
-                cout << "Postfix of " << input << " is: " 
+                cout << "Postfix of " << originalExpression << " is: " 
                        << inputExpression.getPostfixString() << endl;
-                continueExecution = false;
                 break;
             case 'f' :
                 //todo convert each expression in the sequence of expressions to the equivalent
                 //fully parenthesized expression.
                 break;
             case 'c' :
-                cout << "Input: ";
-                cin >> additionalInput;
+                do{                
+                    cout <<"Additional Input: ";
+                    cin >> additionalInput;
+                }while(additionalInput.find(";") == -1);        
                 input += additionalInput;
                 break;
             case 'q' :
@@ -88,7 +109,7 @@ int main(int argc, char** argv) {
                     input = "";
                     break;
             default :                
-                cout <<"Invalid action" << endl;                
+                cout << "Invalid action" << endl;                
                 break;      
         }
     }while (continueExecution);

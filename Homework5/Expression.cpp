@@ -203,7 +203,8 @@ int Expression::evaluateExpression()
     stack<Token> operatorStack; 
     stack<int> outputStack; 
     Token currentToken;
-    
+    int right = -1;
+    int left = -1;
     for(int i =0; i < postfix.size(); i++)
     {    
         currentToken = postfix[i];
@@ -213,11 +214,19 @@ int Expression::evaluateExpression()
             outputStack.push(atoi(currentToken.token.c_str()));
         }else if(currentToken.type == op)
         {
-            operatorStack.push(currentToken);   
-            int right = outputStack.top();
-            outputStack.pop();
-            int left = outputStack.top();
-            outputStack.pop();
+            operatorStack.push(currentToken); 
+            if(!outputStack.empty())
+            {
+                right = outputStack.top();
+                outputStack.pop();
+            }
+            
+            if(!outputStack.empty())
+            {
+                left = outputStack.top();
+                outputStack.pop();
+            }
+
             if(operatorStack.top().token == "+")
                 outputStack.push(left+right);
             else if(operatorStack.top().token == "-")
