@@ -29,7 +29,8 @@ void Expression::set(const string& s)
         Token expressionToken = Token(s.substr(begin, (end-begin)+1));
         tokenized.push_back(expressionToken);
         begin = tokenstart(end+1, s);
-   }    
+   }
+    convertToPostFix();
 }
 int Expression::tokenstart(int pos, string s)
 {
@@ -121,7 +122,6 @@ void Expression::convertToPostFix()
 }
 string Expression::getPostfixString()
 {
-    convertToPostFix();
     string postfixString ="";
     for(int i=0; i< postfix.size(); i++)
     {
@@ -198,9 +198,39 @@ string Expression::convertToPreFix()
     }
     return prefixString;
 }
-string Expression::evaluateExpression()
-{
-    7
+int Expression::evaluateExpression()
+{       
+    stack<Token> operatorStack; 
+    stack<int> outputStack; 
+    Token currentToken;
+    
+    for(int i =0; i < postfix.size(); i++)
+    {    
+        currentToken = postfix[i];
+        
+        if(currentToken.type == integer)
+        {
+            outputStack.push(atoi(currentToken.token.c_str()));
+        }else if(currentToken.type == op)
+        {
+            operatorStack.push(currentToken);   
+            int right = outputStack.top();
+            outputStack.pop();
+            int left = outputStack.top();
+            outputStack.pop();
+            if(operatorStack.top().token == "+")
+                outputStack.push(left+right);
+            else if(operatorStack.top().token == "-")
+                outputStack.push(left-right);
+            else if(operatorStack.top().token == "*")
+                outputStack.push(left*right);
+            else if(operatorStack.top().token == "/")
+                outputStack.push(left/right);
+
+            operatorStack.pop();
+        }
+    }
+    return outputStack.top();
 }
 string Expression::get_original() const
 {

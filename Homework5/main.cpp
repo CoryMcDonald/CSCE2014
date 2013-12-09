@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
     //string input = "(2+3)*4";
     //string input = "2+3*4";
     //string input = "2+3";
-    string action = ">";
+    string action = "=";
     string additionalInput = "";
     bool continueExecution = true;
     Expression inputExpression;
@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
             cin >> input;    
         }
         
-        cout << "Action:";        
+        //cout << "Action:";        
         //cin >> action;
         
         switch(tolower(action.c_str()[0]))
@@ -40,18 +40,23 @@ int main(int argc, char** argv) {
             case '=' :
                 //Check if the expression has equals, that'll determine
                 //if we replace the letters, ex: a+b-c*d/e;a=1;b=2;c=3;d=4;e=5;
-                if(input.find(";"))
-                {
-                    char * inputCString = strdup(input.c_str());
-                    char * nextString;
-                    nextString = strtok (inputCString, ";");
-                    while (nextString != NULL)
-                    {
-                        nextString = strtok(NULL, ";'");
-                    }
-                }else {
-                    //evaluate like normal
-                }
+//                if(input.find(";"))
+//                {
+//                    char * inputCString = strdup(input.c_str());
+//                    char * nextString;
+//                    nextString = strtok (inputCString, ";");
+//                    while (nextString != NULL)
+//                    {
+//                        nextString = strtok(NULL, ";'");
+//                    }
+//                }else {
+//                }
+                
+                inputExpression.tokenized.clear();
+                inputExpression.set(input);
+                cout << input << " = " 
+                       << inputExpression.evaluateExpression() << endl;
+                continueExecution = false;
                 break;
             case '>' :
                 inputExpression.tokenized.clear();

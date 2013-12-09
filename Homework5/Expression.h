@@ -36,6 +36,7 @@ public:
     void convertToPostFix(); 
     string getPostfixString();
     string convertToPreFix(); 
+    int evaluateExpression();
     string get_original() const;
     
     int tokenstart(int pos, string s);
