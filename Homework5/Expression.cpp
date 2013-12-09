@@ -138,7 +138,7 @@ string Expression::convertToPreFix()
 
     Token currentToken;
     
-    for(int i =0; i <tokenized.size(); i++)
+    for(int i =0; i < tokenized.size(); i++)
     {        
         currentToken = tokenized[i];
         
@@ -177,7 +177,7 @@ string Expression::convertToPreFix()
                 outputStack.push(operatorStack.top().token + " " + left + " " + right); //Operator
                 operatorStack.pop();
             }
-            operandStack.push(currentToken);
+            operatorStack.push(currentToken);
         }
     }
     while(!operatorStack.empty())
@@ -197,6 +197,10 @@ string Expression::convertToPreFix()
         outputStack.pop();
     }
     return prefixString;
+}
+string Expression::evaluateExpression()
+{
+    7
 }
 string Expression::get_original() const
 {

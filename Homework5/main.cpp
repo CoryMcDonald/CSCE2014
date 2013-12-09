@@ -15,6 +15,9 @@ using namespace std;
 
 int main(int argc, char** argv) {
     string input = "a+b-c*d/e"; 
+    //string input = "(2+3)*4";
+    //string input = "2+3*4";
+    //string input = "2+3";
     string action = ">";
     string additionalInput = "";
     bool continueExecution = true;
@@ -54,7 +57,7 @@ int main(int argc, char** argv) {
                 inputExpression.tokenized.clear();
                 inputExpression.set(input);
                 cout << "Prefix of " << input << " is: " 
-                       << inputExpression.convertToPreFix() << "]" << endl;
+                       << inputExpression.convertToPreFix() << endl;
                 continueExecution = false;
                 break;
             case '<' :
