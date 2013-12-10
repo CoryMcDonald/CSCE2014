@@ -198,6 +198,74 @@ string Expression::convertToPreFix()
     }
     return prefixString;
 }
+string Expression::convertToParenthesis()
+{
+    string parenthesisString = "";
+    stack<Token> operatorStack; 
+    stack<string> outputStack; 
+
+    Token currentToken;
+    
+    for(int i =0; i < tokenized.size(); i++)
+    {        
+        currentToken = tokenized[i];
+        
+        if(currentToken.type == integer || currentToken.type == letter)
+        {
+            outputStack.push(currentToken.token);
+        }else if(currentToken.type == openbrace || operatorStack.empty() || currentToken.priority > operatorStack.top().priority)
+        {
+            operatorStack.push(currentToken);
+        }else if(currentToken.type == closebrace)
+        {
+            while(operatorStack.top().type != openbrace)
+            {
+                string right = outputStack.top(); //Right                   
+                outputStack.pop();
+                
+                string left = outputStack.top(); //Left                  
+                outputStack.pop();
+                
+                outputStack.push("(" + left + " " + operatorStack.top().token + " " + right +")"); //Operator
+                operatorStack.pop();
+            }
+            operatorStack.pop();
+        }
+        else if(currentToken.priority <= operatorStack.top().priority)
+        {
+            while(!operatorStack.empty() 
+            && currentToken.priority <= operatorStack.top().priority)
+            {
+                string right = outputStack.top(); //Right                   
+                outputStack.pop();
+                
+                string left = outputStack.top(); //Left                  
+                outputStack.pop();
+                
+                outputStack.push("(" + left + " " + operatorStack.top().token + " " + right +")"); //Operator
+                operatorStack.pop();
+            }
+            operatorStack.push(currentToken);
+        }
+    }
+    while(!operatorStack.empty())
+    {
+        string right = outputStack.top(); //Right                   
+        outputStack.pop();
+
+        string left = outputStack.top(); //Left                  
+        outputStack.pop();
+
+        outputStack.push("(" + left + " " + operatorStack.top().token + " " + right +")"); //Operator
+        operatorStack.pop();
+    }
+    while(!outputStack.empty())
+    {
+        parenthesisString += outputStack.top();
+        outputStack.pop();
+    }
+    return parenthesisString;
+}
 int Expression::evaluateExpression()
 {       
     stack<Token> operatorStack; 

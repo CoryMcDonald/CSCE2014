@@ -40,8 +40,8 @@ string replaceInString(string originalString, string toReplace)
 }
 
 int main(int argc, char** argv) {
-    //string input ="";
-    string input = "a+b-c*d/e;a=1;b=2;c=3;d=4;e=5;"; 
+    string input ="";
+    //string input = "a+b-c*d/e;a=1;b=2;c=3;d=4;e=5;"; 
     //string input = "(2+3)*4;2+3*4;";
     //string input = "2+3;";
     string action = "=";
@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
     string originalExpression = "";
     string stringToReplace;
     bool continueExecution = true;
+    bool expressionHasSubstituion = false;
     Expression inputExpression;
     char * expressionToEvaluate;
     cout << "=== expression evaluation program starts ===" << endl;
@@ -70,7 +71,7 @@ int main(int argc, char** argv) {
         //todo implement the parenthesis output
         //todo add error checking and try catch 
         
-        if(action[0] == '=' || action[0] == '<' || action[0] == '>')
+        if(action[0] == '=' || action[0] == '<' || action[0] == '>' || action[0] == 'f')
         {
             expressionToEvaluate = strdup(input.c_str());
             char * nextString;
@@ -87,6 +88,7 @@ int main(int argc, char** argv) {
                     if(i > 0)
                     {
                         expressionToEvaluate = strdup(replaceInString(expressionToEvaluate, nextString).c_str());  
+                        expressionHasSubstituion = true;
                     }
                 }             
                 
@@ -105,34 +107,40 @@ int main(int argc, char** argv) {
                         }else
                         {
                             if(nextString == NULL)
-                            {
-                                
+                            {                                
                                  cout << originalExpression << " = " 
                                         << inputExpression.evaluateExpression() << endl;
                             }
                         }
                         break;
-                    case '>' :
-                        cout << "Prefix of " << originalExpression << " is: " 
+                    case '>' :                        
+                        if(!expressionHasSubstituion)
+                        {
+                             cout << "Prefix of " << expressionToEvaluate << " is: " 
                                << inputExpression.convertToPreFix() << endl;
+                        }
                         break;
                     case '<' :
-                        cout << "Postfix of " << originalExpression << " is: " 
-                               << inputExpression.getPostfixString() << endl;
+                        if(!expressionHasSubstituion)
+                        {
+                            cout << "Postfix of " << expressionToEvaluate << " is: " 
+                                   << inputExpression.getPostfixString() << endl;
+                        }
+                        break;
+                    case 'f' :
+                        if(!expressionHasSubstituion)
+                        {
+                           cout << "Parenthesis of " << expressionToEvaluate << " is: " 
+                               << inputExpression.convertToParenthesis() << endl;
+                        }
                         break;
                     default : break;
                 } 
-            }
-                            continueExecution = false;
-
+            }           
         }else
         {
             switch(tolower(action.c_str()[0]))
             {
-                case 'f' :
-                    //todo convert each expression in the sequence of expressions to the equivalent
-                    //fully parenthesized expression.
-                    break;
                 case 'c' :
                     do{                
                         cout <<"Additional Input: ";

@@ -30,14 +30,15 @@ public:
     Expression(const string& s);
     void set(const string& s);
     void display() const;
-    
-    Token operationCombine(stack<Token> operatorStack, stack<Token> operandStack);
-    
     void convertToPostFix(); 
+
+    
     string getPostfixString();
-    string convertToPreFix(); 
-    int evaluateExpression();
+    string convertToPreFix();     
     string get_original() const;
+    string convertToParenthesis();
+    
+    int evaluateExpression();
     
     int tokenstart(int pos, string s);
     int tokenend(int pos, string s);
