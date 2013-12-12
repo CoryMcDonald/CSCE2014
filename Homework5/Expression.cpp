@@ -137,11 +137,31 @@ bool Expression::isValidExpression()
     valid = true; // a field in Expression class
     Token currentToken;
     
-    for(int i =0; state != done && i <tokenized.size() ; i++)
+    for(int i =0; state != done && i<tokenized.size(); i++)
     {        
         currentToken = tokenized[i];
-//        cout << "currentToken["<<i<<"]"<<currentToken.token<<endl;
-//        cout << "valid: " << valid <<endl;
+        cout << "currentToken["<<i<<"] "<< tokenized[i].token << " state: ";
+        if( state == operand)
+        {
+            cout <<"operand"<<endl;
+        }else if(state == done)
+        {
+                cout << "done" << endl;
+        }else
+        {
+            cout<<"func" << endl;
+        }
+        cout << "Type: ";
+        if( currentToken.type == integer)
+        {
+            cout <<"integer"<<endl;
+        }else if( currentToken.type == op)
+        {
+                cout << "op" << endl;
+        }else if( currentToken.type == letter)
+        {
+            cout<<"letter" << endl;
+        }
 
         switch(state)
         {
@@ -183,6 +203,7 @@ bool Expression::isValidExpression()
             default: break;
         }   
     }
+    cout <<"End for"<<endl;
     if(pcount != 0)
     {
         valid =false;
@@ -204,7 +225,7 @@ bool Expression::isValidExpression()
     }
     if(valid)
     {   
-        if(eqtrue && tokenized.size() >= 2)
+        if(eqtrue = true && tokenized.size() >= 2)
         {
             if(tokenized[0].type == letter && tokenized[2].type == integer)
             {
@@ -215,7 +236,7 @@ bool Expression::isValidExpression()
             }
         }
     }
-    cout <<valid;
+    //cout <<valid;
     return valid;
 }
 string Expression::convertToPreFix()
