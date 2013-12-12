@@ -60,7 +60,12 @@ int main(int argc, char** argv) {
             do{                
                 cout <<"Input: ";
                 cin >> input;
-            }while(input.find(";") == -1);            
+                
+                expressionToEvaluate = strdup(replaceInString(input, ";").c_str());
+                inputExpression.tokenized.clear();
+                inputExpression.set(expressionToEvaluate);                
+                cout <<input.substr(input.size()-1, 1) != ";";
+            }while(!inputExpression.isValidExpression() );            
         }
         
         cout << "Action:";        

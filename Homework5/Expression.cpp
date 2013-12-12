@@ -129,6 +129,95 @@ string Expression::getPostfixString()
     }
     return postfixString;
 }
+bool Expression::isValidExpression()
+{
+    bool eqtrue = false; // set to true if = is encountered
+    states state = operand; // initial state value
+    int pcount = 0; // for checking braces   
+    valid = true; // a field in Expression class
+    Token currentToken;
+    
+    for(int i =0; state != done && i <tokenized.size() ; i++)
+    {        
+        currentToken = tokenized[i];
+//        cout << "currentToken["<<i<<"]"<<currentToken.token<<endl;
+//        cout << "valid: " << valid <<endl;
+
+        switch(state)
+        {
+            case operand: 
+                    if(currentToken.type == openbrace)
+                    {
+                        pcount++;
+                    }else if(currentToken.type == integer || currentToken.type == letter)
+                    {
+                        state = func;
+                    }else //invalid
+                    {
+                        valid = false;
+                        state = done;
+                    }
+                 break;
+            case func:
+                if(currentToken.type == closebrace)
+                {
+                    pcount--;
+                    if(pcount < 0)
+                    {
+                        valid = false;
+                        state = done;
+                    }
+                }else if(currentToken.type == eq)
+                {
+                    eqtrue = true;
+                    state = operand;
+                }else if(currentToken.type == op)
+                    state = operand;
+                else {
+                    valid = false;
+                    state = done;
+                }
+                break;
+            case done:
+                break;
+            default: break;
+        }   
+    }
+    if(pcount != 0)
+    {
+        valid =false;
+    }
+   
+    if( state == operand)
+    {
+        valid = false;
+        cout <<"operand"<<endl;
+    }else
+    {
+        if(state == done)
+        {
+            cout << "done";
+        }else
+        {
+            cout<<"func";
+        }
+    }
+    if(valid)
+    {   
+        if(eqtrue && tokenized.size() >= 2)
+        {
+            if(tokenized[0].type == letter && tokenized[2].type == integer)
+            {
+                type = assignment;
+            }else
+            {
+                valid = false;
+            }
+        }
+    }
+    cout <<valid;
+    return valid;
+}
 string Expression::convertToPreFix()
 {
     string prefixString = "";

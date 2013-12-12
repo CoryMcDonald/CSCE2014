@@ -17,6 +17,7 @@
 using namespace std;
 
 enum exp_type {assignment, arithmetic, illegal};
+enum states {operand, func, done};
 
 class Expression {
 public:
@@ -31,15 +32,14 @@ public:
     void set(const string& s);
     void display() const;
     void convertToPostFix(); 
-
+    bool isValidExpression();
     
     string getPostfixString();
     string convertToPreFix();     
     string get_original() const;
     string convertToParenthesis();
     
-    int evaluateExpression();
-    
+    int evaluateExpression();    
     int tokenstart(int pos, string s);
     int tokenend(int pos, string s);
     
