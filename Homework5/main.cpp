@@ -50,8 +50,10 @@ int main(int argc, char** argv) {
     string stringToReplace;
     bool continueExecution = true;
     bool expressionHasSubstituion = false;
+    bool inputIsInvalid = false;
     Expression inputExpression;
     char * expressionToEvaluate;
+    char * inputTokenized;
     cout << "=== expression evaluation program starts ===" << endl;
     do
     {
@@ -60,21 +62,37 @@ int main(int argc, char** argv) {
             do{                
                 cout <<"Input: ";
                 cin >> input;
+                inputIsInvalid=false;
                 
-                expressionToEvaluate = strdup(replaceInString(input, ";").c_str());
-                inputExpression.tokenized.clear();
-                inputExpression.set(expressionToEvaluate);                
-                cout <<input.substr(input.size()-1, 1) != ";";
-            }while(!inputExpression.isValidExpression() );            
+                if(input.find(";") != -1)
+                {
+                    inputTokenized = strdup(input.c_str());
+                    char * nextInput;
+                    nextInput = strtok (inputTokenized, ";");                
+
+                    for(int i=0; nextInput != NULL; i++)
+                    {  
+                       inputExpression.tokenized.clear();
+                       inputExpression.set(nextInput); 
+                       if(!inputExpression.isValidExpression())
+                       {
+                           cout << "Invalid input" << endl;
+                           inputIsInvalid = true;
+                           break;
+                       }                       
+                       nextInput = strtok(NULL, ";");
+                    }
+                }else
+                {
+                    cout << "Invalid input" << endl;
+                    inputIsInvalid = true;
+                }
+            }while(inputIsInvalid);            
         }
         
         cout << "Action:";        
         cin >> action;
         
-        //todo clean up the code below
-        //todo Add additional comments so you can follow what i'm doing
-        //todo implement the parenthesis output
-        //todo add error checking and try catch 
         
         if(action[0] == '=' || action[0] == '<' || action[0] == '>' || action[0] == 'f')
         {
@@ -123,6 +141,10 @@ int main(int argc, char** argv) {
                         {
                              cout << "Prefix of " << expressionToEvaluate << " is: " 
                                << inputExpression.convertToPreFix() << endl;
+                        }else if(i==0)
+                        {
+                             cout << "Prefix of " << originalExpression << " is: " 
+                               << inputExpression.convertToPreFix() << endl;
                         }
                         break;
                     case '<' :
@@ -130,12 +152,20 @@ int main(int argc, char** argv) {
                         {
                             cout << "Postfix of " << expressionToEvaluate << " is: " 
                                    << inputExpression.getPostfixString() << endl;
+                        }else if(i==0)
+                        {
+                             cout << "Postfix of " << originalExpression << " is: " 
+                               << inputExpression.getPostfixString() << endl;
                         }
                         break;
                     case 'f' :
                         if(!expressionHasSubstituion)
                         {
                            cout << "Parenthesis of " << expressionToEvaluate << " is: " 
+                               << inputExpression.convertToParenthesis() << endl;
+                        }else if(i==0)
+                        {
+                            cout << "Parenthesis of " << originalExpression << " is: " 
                                << inputExpression.convertToParenthesis() << endl;
                         }
                         break;

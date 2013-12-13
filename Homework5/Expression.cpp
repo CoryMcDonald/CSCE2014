@@ -136,8 +136,8 @@ bool Expression::isValidExpression()
     int pcount = 0; // for checking braces   
     valid = true; // a field in Expression class
     Token currentToken;
-    
-    for(int i =0; state != done && i<tokenized.size(); i++)
+    cout <<"begin for" << endl;
+    for(int i =0; state != done && i < tokenized.size(); i++)
     {        
         currentToken = tokenized[i];
         cout << "currentToken["<<i<<"] "<< tokenized[i].token << " state: ";
@@ -174,6 +174,7 @@ bool Expression::isValidExpression()
                         state = func;
                     }else //invalid
                     {
+                        cout << "Operand is else, setting it to false" << endl;
                         valid = false;
                         state = done;
                     }
@@ -189,6 +190,7 @@ bool Expression::isValidExpression()
                     }
                 }else if(currentToken.type == eq)
                 {
+                    cout <<"Setting eqtrue to true" << endl;
                     eqtrue = true;
                     state = operand;
                 }else if(currentToken.type == op)
@@ -212,7 +214,7 @@ bool Expression::isValidExpression()
     if( state == operand)
     {
         valid = false;
-        cout <<"operand"<<endl;
+        cout <<"State is operand - setting valid to false " <<endl;
     }else
     {
         if(state == done)
@@ -225,18 +227,19 @@ bool Expression::isValidExpression()
     }
     if(valid)
     {   
-        if(eqtrue = true && tokenized.size() >= 2)
+        if(eqtrue == true && tokenized.size() >= 2)
         {
-            if(tokenized[0].type == letter && tokenized[2].type == integer)
+            if(tokenized[0].type == letter &&  tokenized[2].type == integer)
             {
                 type = assignment;
             }else
             {
+                cout <<"eq SET VALID TO FALSE"<<endl;
                 valid = false;
             }
-        }
+        }       
     }
-    //cout <<valid;
+    cout <<"Valid: " << valid;
     return valid;
 }
 string Expression::convertToPreFix()
