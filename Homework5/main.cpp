@@ -12,7 +12,7 @@
 #include "Expression.h"
 
 using namespace std;
-
+//This function is used to substitute variables with ints 
 string replaceInString(string originalString, string toReplace)
 {
     string newString = "";
@@ -44,21 +44,26 @@ int main(int argc, char** argv) {
     //string input = "a+b-c*d/e;a=1;b=2;c=3;d=4;e=5;"; 
     //string input = "(2+3)*4;2+3*4;";
     //string input = "2+3;";
-    string action = "=";
+    string action = "";
     string additionalInput = "";
     string originalExpression = "";
     string stringToReplace;
     bool continueExecution = true;
     bool expressionHasSubstituion = false;
     bool inputIsInvalid = false;
-    Expression inputExpression;
     char * expressionToEvaluate;
     char * inputTokenized;
+    Expression inputExpression;
+
     cout << "=== expression evaluation program starts ===" << endl;
     do
     {
         if(input == "")
         {
+            //So this input is a little complicated i'll do the rundown
+            //Take in input, make sure it can be tokenized
+            //If it can, then separate it into it's different expressions and then validate
+            //If all that is good then we can continue, else just loop until good
             do{                
                 cout <<"Input: ";
                 cin >> input;
@@ -90,10 +95,11 @@ int main(int argc, char** argv) {
             }while(inputIsInvalid);            
         }
         
+        //Reading in action
         cout << "Action:";        
         cin >> action;
         
-        
+        //If action requires us to work with the multiple expressions
         if(action[0] == '=' || action[0] == '<' || action[0] == '>' || action[0] == 'f')
         {
             expressionToEvaluate = strdup(input.c_str());
@@ -177,10 +183,40 @@ int main(int argc, char** argv) {
             switch(tolower(action.c_str()[0]))
             {
                 case 'c' :
-                    do{                
-                        cout <<"Additional Input: ";
-                        cin >> additionalInput;
-                    }while(additionalInput.find(";") == -1);        
+                do{          
+                    //So this input is a little complicated i'll do the rundown
+                    //Take in input, make sure it can be tokenized
+                    //If it can, then separate it into it's different expressions and then validate
+                    //If all that is good then we can continue, else just loop until good
+
+                    cout <<"Additional Input: ";
+                    cin >> additionalInput;
+                    inputIsInvalid=false;
+
+                    if(additionalInput.find(";") != -1)
+                    {
+                        inputTokenized = strdup(additionalInput.c_str());
+                        char * nextInput;
+                        nextInput = strtok (inputTokenized, ";");                
+
+                        for(int i=0; nextInput != NULL; i++)
+                        {  
+                           inputExpression.tokenized.clear();
+                           inputExpression.set(nextInput); 
+                           if(!inputExpression.isValidExpression())
+                           {
+                               cout << "Invalid input" << endl;
+                               inputIsInvalid = true;
+                               break;
+                           }                       
+                           nextInput = strtok(NULL, ";");
+                        }
+                    }else
+                    {
+                        cout << "Invalid input" << endl;
+                        inputIsInvalid = true;
+                    }
+                }while(inputIsInvalid);    
                     input += additionalInput;
                     break;
                 case 'q' :
@@ -195,7 +231,8 @@ int main(int argc, char** argv) {
             }
         }
     }while (continueExecution);
-    
+    cout << "Thanks for all your hard work this semester! You were great!" << endl;
+    cout << "=== expression evaluation program ends ===" <<endl;
     return 0;
 }
 

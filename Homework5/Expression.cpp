@@ -70,6 +70,7 @@ void Expression::display() const
 }
 void Expression::convertToPostFix()
 {
+    //This function converts the inputExpression passes into a vector of tokens
     vector<Token> postfixVector;
     stack<Token> tokenStack; 
     Token currentToken;
@@ -131,50 +132,29 @@ string Expression::getPostfixString()
 }
 bool Expression::isValidExpression()
 {
+    //Wing Lee's notes on valid expressions
     bool eqtrue = false; // set to true if = is encountered
     states state = operand; // initial state value
     int pcount = 0; // for checking braces   
     valid = true; // a field in Expression class
     Token currentToken;
-    cout <<"begin for" << endl;
+    
+    //Loops through, compares the states and makes sure we don't run out of tokens
     for(int i =0; state != done && i < tokenized.size(); i++)
     {        
         currentToken = tokenized[i];
-        cout << "currentToken["<<i<<"] "<< tokenized[i].token << " state: ";
-        if( state == operand)
-        {
-            cout <<"operand"<<endl;
-        }else if(state == done)
-        {
-                cout << "done" << endl;
-        }else
-        {
-            cout<<"func" << endl;
-        }
-        cout << "Type: ";
-        if( currentToken.type == integer)
-        {
-            cout <<"integer"<<endl;
-        }else if( currentToken.type == op)
-        {
-                cout << "op" << endl;
-        }else if( currentToken.type == letter)
-        {
-            cout<<"letter" << endl;
-        }
-
+        
         switch(state)
         {
             case operand: 
                     if(currentToken.type == openbrace)
                     {
-                        pcount++;
+                        pcount++; //Increases parenthesis count so we can compare later
                     }else if(currentToken.type == integer || currentToken.type == letter)
                     {
                         state = func;
                     }else //invalid
-                    {
-                        cout << "Operand is else, setting it to false" << endl;
+                    {                       
                         valid = false;
                         state = done;
                     }
@@ -190,7 +170,6 @@ bool Expression::isValidExpression()
                     }
                 }else if(currentToken.type == eq)
                 {
-                    cout <<"Setting eqtrue to true" << endl;
                     eqtrue = true;
                     state = operand;
                 }else if(currentToken.type == op)
@@ -205,7 +184,6 @@ bool Expression::isValidExpression()
             default: break;
         }   
     }
-    cout <<"End for"<<endl;
     if(pcount != 0)
     {
         valid =false;
@@ -214,16 +192,6 @@ bool Expression::isValidExpression()
     if( state == operand)
     {
         valid = false;
-        cout <<"State is operand - setting valid to false " <<endl;
-    }else
-    {
-        if(state == done)
-        {
-            cout << "done";
-        }else
-        {
-            cout<<"func";
-        }
     }
     if(valid)
     {   
@@ -234,48 +202,47 @@ bool Expression::isValidExpression()
                 type = assignment;
             }else
             {
-                cout <<"eq SET VALID TO FALSE"<<endl;
                 valid = false;
             }
         }       
     }
-    cout <<"Valid: " << valid;
     return valid;
 }
 string Expression::convertToPreFix()
 {
     string prefixString = "";
     stack<Token> operatorStack; 
-    stack<Token> operandStack; 
     stack<string> outputStack; 
 
     Token currentToken;
-    
+    //Loops through each token and reads it to be in prefix mode
     for(int i =0; i < tokenized.size(); i++)
     {        
         currentToken = tokenized[i];
-        
+        //If it's a token let's add it to the stack
         if(currentToken.type == integer || currentToken.type == letter)
         {
             outputStack.push(currentToken.token);
-        }else if(currentToken.type == openbrace || operatorStack.empty() || currentToken.priority > operatorStack.top().priority)
+        } //If it's an operator push it, but check to make sure stack doesn't have tokens on it
+        else if(currentToken.type == openbrace || operatorStack.empty() || currentToken.priority > operatorStack.top().priority)
         {
             operatorStack.push(currentToken);
-        }else if(currentToken.type == closebrace)
+        }//If the type is a close brace we gotta make sure we close it right
+        else if(currentToken.type == closebrace)
         {
             while(operatorStack.top().type != openbrace)
             {
-                string right = outputStack.top(); //Right                   
+                string right = outputStack.top(); //Get right operand                   
                 outputStack.pop();
                 
-                string left = outputStack.top(); //Left                  
+                string left = outputStack.top(); //Left operand                
                 outputStack.pop();
                 
-                outputStack.push(operatorStack.top().token + " " + left + " " + right); //Operator
+                outputStack.push(operatorStack.top().token + " " + left + " " + right); //Microprefix
                 operatorStack.pop();
             }
             operatorStack.pop();
-        }
+        } 
         else if(currentToken.priority <= operatorStack.top().priority)
         {
             while(!operatorStack.empty() 
@@ -293,6 +260,7 @@ string Expression::convertToPreFix()
             operatorStack.push(currentToken);
         }
     }
+    //Add any leftover operators to the output
     while(!operatorStack.empty())
     {
         string right = outputStack.top(); //Right                   
@@ -304,6 +272,7 @@ string Expression::convertToPreFix()
         outputStack.push(operatorStack.top().token + " " + left + " " + right); //Operator
         operatorStack.pop();
     }
+    //Adding it to the output
     while(!outputStack.empty())
     {
         prefixString += outputStack.top();
@@ -313,16 +282,20 @@ string Expression::convertToPreFix()
 }
 string Expression::convertToParenthesis()
 {
+    //Basically the same as prefix however it rearranges the order of the operators and adds parenthesis
     string parenthesisString = "";
     stack<Token> operatorStack; 
     stack<string> outputStack; 
 
     Token currentToken;
+    //Basic concept is that we loop and add to the stack if letter or number
+    //If the operator is higher than that the exists, pop the last two operands off
+    //wrap in parenthesis and then readd that to the stack.
     
     for(int i =0; i < tokenized.size(); i++)
     {        
         currentToken = tokenized[i];
-        
+      
         if(currentToken.type == integer || currentToken.type == letter)
         {
             outputStack.push(currentToken.token);
@@ -361,6 +334,7 @@ string Expression::convertToParenthesis()
             operatorStack.push(currentToken);
         }
     }
+    //Remove any other operators on the stack
     while(!operatorStack.empty())
     {
         string right = outputStack.top(); //Right                   
@@ -372,6 +346,7 @@ string Expression::convertToParenthesis()
         outputStack.push("(" + left + " " + operatorStack.top().token + " " + right +")"); //Operator
         operatorStack.pop();
     }
+    //Actually adding them to the string
     while(!outputStack.empty())
     {
         parenthesisString += outputStack.top();
@@ -380,7 +355,9 @@ string Expression::convertToParenthesis()
     return parenthesisString;
 }
 int Expression::evaluateExpression()
-{       
+{     
+    //Takes the postfix tokens and then evaluates them
+    
     stack<Token> operatorStack; 
     stack<int> outputStack; 
     Token currentToken;
@@ -389,12 +366,13 @@ int Expression::evaluateExpression()
     for(int i =0; i < postfix.size(); i++)
     {    
         currentToken = postfix[i];
-        
+        //If it's an integer then add the int and wait for an operator
         if(currentToken.type == integer)
         {
             outputStack.push(atoi(currentToken.token.c_str()));
         }else if(currentToken.type == op)
         {
+            //Make sure the stack isn't empty (basic validation) then do operation
             operatorStack.push(currentToken); 
             if(!outputStack.empty())
             {
@@ -407,7 +385,7 @@ int Expression::evaluateExpression()
                 left = outputStack.top();
                 outputStack.pop();
             }
-
+            //Operate!
             if(operatorStack.top().token == "+")
                 outputStack.push(left+right);
             else if(operatorStack.top().token == "-")
@@ -416,6 +394,8 @@ int Expression::evaluateExpression()
                 outputStack.push(left*right);
             else if(operatorStack.top().token == "/")
                 outputStack.push(left/right);
+            else if(operatorStack.top().token == "%")
+                outputStack.push(left%right);
 
             operatorStack.pop();
         }
@@ -429,10 +409,6 @@ string Expression::get_original() const
 vector<Token> Expression::get_tokenized() const
 {
     return tokenized;
-}
-vector<Token> Expression::get_postfix() const
-{
-
 }
 bool Expression::get_valid() const
 {
